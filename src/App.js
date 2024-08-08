@@ -1,5 +1,7 @@
 import './App.css';
 import React, {useState} from "react";
+import { MdDelete } from "react-icons/md";
+import { FaCheck } from "react-icons/fa";
 
 function App() {
 
@@ -36,6 +38,13 @@ function App() {
         <div className = 'todo-list-item'>
           <h3>Task1</h3>
           <p>Description</p>
+        
+
+        <div>
+        <MdDelete className='icon'/>
+        <FaCheck className='check-icon'/>
+        </div>
+
         </div>
       </div>
 
