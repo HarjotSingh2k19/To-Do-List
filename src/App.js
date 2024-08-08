@@ -8,7 +8,9 @@ function App() {
   const [allTodos, setTodos] = useState([]);
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
+  const [completedTodos, setCompletedTodos] = useState([]);
 
+  // Adding Functionality
   const handleAddTodo = () => {
     let newTodoItem = {
       title: newTitle,
@@ -20,26 +22,53 @@ function App() {
 
     setTodos(updatedTodoArr);
 
-    localStorage.setItem('todolist', JSON.stringify(updatedTodoArr));
+    localStorage.setItem("todolist", JSON.stringify(updatedTodoArr));
   };
 
+  // Deleting functionality
   const handleDeleteTodo = (index) => {
     let reducedTodo = [...allTodos];
 
     reducedTodo.splice(index);
 
-    localStorage.setItem('todolist', JSON.stringify(reducedTodo));
     setTodos(reducedTodo);
-  }
 
+    localStorage.setItem("todolist", JSON.stringify(reducedTodo));
+  };
+
+  const handleComplete = (index) => {
+    let now = new Date();
+    let dd = now.getDate();
+    let mm = now.getMonth() + 1;
+    let yyyy = now.getFullYear();
+    let h = now.getHours();
+    let m = now.getMinutes();
+    let s = now.getSeconds();
+    let completedOn =
+      dd + "-" + mm + "-" + yyyy + " at " + h + ":" + m + ":" + s;
+
+    let filteredItem = {
+      ...allTodos[index],
+      completedOn: completedOn,
+    };
+
+    let updatedCompletedArr = [...completedTodos];
+    updatedCompletedArr.push(filteredItem);
+
+    setCompletedTodos(updatedCompletedArr);
+
+    // delete from todo list now
+    handleDeleteTodo(index);
+  };
+
+  // render all the saved list items at starting
   useEffect(() => {
-    let savedTodo = JSON.parse(localStorage.getItem('todolist'));
+    let savedTodo = JSON.parse(localStorage.getItem("todolist"));
 
-    if(savedTodo){
+    if (savedTodo) {
       setTodos(savedTodo);
     }
-
-  },[]);
+  }, []);
 
   return (
     <div className="App">
@@ -92,23 +121,56 @@ function App() {
           </button>
         </div>
 
-        {/* Actual Content Area*/}
+        {/* Actual Content Area for todo list*/}
         <div className="todo-list">
-          {allTodos.map((item, index) => {
-            return (
-              <div className="todo-list-item" key={index}>
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                </div>
+          {isCompleteScreen === false &&
+            allTodos.map((item, index) => {
+              return (
+                <div className="todo-list-item" key={index}>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                  </div>
 
-                <div>
-                  <MdDelete className="icon" onClick={() => handleDeleteTodo(index)} title="Delete?" />
-                  <FaCheck className="check-icon" title="Complete?" />
+                  <div>
+                    <MdDelete
+                      className="icon"
+                      onClick={() => handleDeleteTodo(index)}
+                      title="Delete?"
+                    />
+                    <FaCheck
+                      className="check-icon"
+                      onClick={() => handleComplete(index)}
+                      title="Complete?"
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+
+          {/* Actual Content Area for complete list*/}
+          {isCompleteScreen === true &&
+            completedTodos.map((item, index) => {
+              return (
+                <div className="todo-list-item" key={index}>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                    <p>
+                      <small>Completed on: {item.completedOn}</small>
+                    </p>
+                  </div>
+
+                  <div>
+                    <MdDelete
+                      className="icon"
+                      onClick={() => handleDeleteTodo(index)}
+                      title="Delete?"
+                    />
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </div>
     </div>
