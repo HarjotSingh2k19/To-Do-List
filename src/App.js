@@ -10,7 +10,7 @@ function App() {
   const [newDescription, setNewDescription] = useState("");
   const [completedTodos, setCompletedTodos] = useState([]);
 
-  // Adding Functionality
+  // Adding Functionality in Todo list
   const handleAddTodo = () => {
     let newTodoItem = {
       title: newTitle,
@@ -25,17 +25,18 @@ function App() {
     localStorage.setItem("todolist", JSON.stringify(updatedTodoArr));
   };
 
-  // Deleting functionality
+  // Deleting functionality in Todo list
   const handleDeleteTodo = (index) => {
     let reducedTodo = [...allTodos];
 
-    reducedTodo.splice(index);
+    reducedTodo.splice(index, 1);
 
     setTodos(reducedTodo);
 
     localStorage.setItem("todolist", JSON.stringify(reducedTodo));
   };
 
+  // displaying completed tasks
   const handleComplete = (index) => {
     let now = new Date();
     let dd = now.getDate();
@@ -59,16 +60,35 @@ function App() {
 
     // delete from todo list now
     handleDeleteTodo(index);
+
+    localStorage.setItem('completedTodos', JSON.stringify(updatedCompletedArr));
   };
+
+
+  // delete functionality in 'Completed' tab
+  const handleDeleteCompletedTodo = (index) => {
+    const reducedCompletedTodo = [...completedTodos];
+
+    reducedCompletedTodo.splice(index, 1);
+
+    setCompletedTodos(reducedCompletedTodo);
+    localStorage.setItem('completedTodos', JSON.stringify(reducedCompletedTodo));
+  }
 
   // render all the saved list items at starting
   useEffect(() => {
     let savedTodo = JSON.parse(localStorage.getItem("todolist"));
+    let savedCompletedTodo = JSON.parse(localStorage.getItem("completedTodos"));
 
     if (savedTodo) {
       setTodos(savedTodo);
     }
+
+    if(savedCompletedTodo){
+      setCompletedTodos(savedCompletedTodo);
+    }
   }, []);
+
 
   return (
     <div className="App">
@@ -164,7 +184,7 @@ function App() {
                   <div>
                     <MdDelete
                       className="icon"
-                      onClick={() => handleDeleteTodo(index)}
+                      onClick={() => handleDeleteCompletedTodo(index)}
                       title="Delete?"
                     />
                   </div>
